@@ -38,7 +38,9 @@ namespace ADO.net
             //model.BasicPay = 3000000;
             //model.EmpName = "Megan";
 
-            employeeRepository.GetAllEmployeesFromDate();
+            //employeeRepository.GetAllEmployeesFromDate();
+
+            employeeRepository.ImplementDatabaseFunctions();
         }
     }
 }

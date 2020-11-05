@@ -221,5 +221,47 @@ namespace ADO.net
                 connection.Close();
             }
         }
+        /// <summary>
+        /// UC 6: 
+        /// Implements the database functions like count, min, max, avg, and sum.
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public void ImplementDatabaseFunctions()
+        {
+            EmployeeModel model = new EmployeeModel();
+            try
+            {
+                using (this.connection)
+                {
+                    string query = @"select Gender, SUM(BasicPay) as SumOfSalary, MAX(basicPay) as MaxSalary, MIN(BasicPay) as MinSalary, AVG(BasicPay) as AvgSalary, COUNT(BasicPay) as Count from dbo.employee_payroll where Gender='M' or Gender='F' group by Gender";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string Gender = reader[0].ToString();
+                            double SumOfSalary = reader.GetDouble(1);
+                            double MaxSalary = reader.GetDouble(2);
+                            double MinSalary = reader.GetDouble(3);
+                            double AvgSalary = reader.GetDouble(4);
+                            int Count = reader.GetInt32(5);
+                            Console.WriteLine("Gender:{0}\tCount:{1}\tMinSalary:{2}\tMaxSalary:{3}\tSumOfSalary:{4}\tAvgSalary:{5}\n",Gender,Count,MinSalary,MaxSalary,SumOfSalary,AvgSalary);
+                        }
+                    }
+                    else
+                        Console.WriteLine("No data found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }
