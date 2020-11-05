@@ -24,15 +24,15 @@ namespace ADO.net
         /// Gets all the employees from the database.
         /// </summary>
         /// <exception cref="Exception"></exception>
-        public void GetAllEmployees()
+        public double GetAllEmployees()
         {
             EmployeeModel model = new EmployeeModel();
             try
             {
-                using(connection)
+                using(this.connection)
                 {
                     string query = @"select * from dbo.employee_payroll";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SqlCommand command = new SqlCommand(query, this.connection);
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
@@ -52,10 +52,12 @@ namespace ADO.net
                             model.IncomeTax = reader.GetDecimal(10);
                             model.NetPay = reader.GetDecimal(11);
                             Console.WriteLine("{0},{1}", model.EmpID,model.EmpName);
+                            return model.BasicPay;
                         }
                     }
                     else
                         Console.WriteLine("No data found");
+                    return 0;
                 }
             }
             catch(Exception ex)
@@ -144,6 +146,32 @@ namespace ADO.net
             {
                 throw new Exception(ex.Message);
             }
+        }
+        /// <summary>
+        /// Reads the updated salary.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.Exception">no data found</exception>
+        public double ReadSalary()
+        {
+            string connectionString1 = @"Data Source=KARTIKEYA;Initial Catalog=employee_payroll;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            SqlConnection connection = new SqlConnection(connectionString1);
+            double salary;
+            EmployeeModel model = new EmployeeModel();
+            SqlCommand command = new SqlCommand("Select * from employee_payroll", connection);
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                salary = model.BasicPay;
+            }
+            else
+            {
+                throw new Exception("no data found");
+            }
+            reader.Close();
+            connection.Close();
+            return salary;
         }
     }
 }
