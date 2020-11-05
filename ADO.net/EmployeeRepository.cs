@@ -173,5 +173,53 @@ namespace ADO.net
             connection.Close();
             return salary;
         }
+        /// <summary>
+        /// UC 5:
+        /// Gets all employees from database with given date range.
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public void GetAllEmployeesFromDate()
+        {
+            EmployeeModel model = new EmployeeModel();
+            try
+            {
+                using (this.connection)
+                {
+                    string query = @"select * from employee_payroll where StartDate between cast('2020-01-01' as date) and cast(getdate() as date)";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            model.EmpID = reader.GetInt32(0);
+                            model.EmpName = reader.GetString(1);
+                            model.BasicPay = reader.GetDouble(2);
+                            model.StartDate = reader.GetDateTime(3);
+                            model.Gender = reader.GetString(4);
+                            model.PhnNo = reader.GetString(5);
+                            model.Department = reader.GetString(6);
+                            model.Address = reader.GetString(7);
+                            model.Deductions = reader.GetDecimal(8);
+                            model.TaxablePay = reader.GetDecimal(9);
+                            model.IncomeTax = reader.GetDecimal(10);
+                            model.NetPay = reader.GetDecimal(11);
+                            Console.WriteLine("{0},{1}", model.EmpID, model.EmpName);
+                        }
+                    }
+                    else
+                        Console.WriteLine("No data found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }

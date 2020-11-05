@@ -16,7 +16,7 @@ namespace ADO.net
             EmployeeRepository employeeRepository = new EmployeeRepository();
 
             ///Instance of the GetAllEmployees method
-            employeeRepository.GetAllEmployees();
+            //employeeRepository.GetAllEmployees();
             EmployeeModel model = new EmployeeModel();
 
             ///Adding employee deatils into the database
@@ -34,9 +34,11 @@ namespace ADO.net
             //Console.WriteLine(employeeRepository.AddEmployee(model) ? "Record inserted successfully " : "Failed");
 
             ///Updating the basic pay with given name and employee id
-            model.EmpID = 3;
-            model.BasicPay = 3000000;
-            model.EmpName = "Megan";
+            //model.EmpID = 3;
+            //model.BasicPay = 3000000;
+            //model.EmpName = "Megan";
+
+            employeeRepository.GetAllEmployeesFromDate();
         }
     }
 }
