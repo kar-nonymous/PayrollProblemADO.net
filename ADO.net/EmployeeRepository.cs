@@ -32,16 +32,16 @@ namespace ADO.net
                         {
                             model.EmpID = reader.GetInt32(0);
                             model.EmpName = reader.GetString(1);
-                            model.PhnNo = reader.GetString(2);
-                            model.Address = reader.GetString(3);
-                            model.Department = reader.GetString(4);
-                            model.Gender = reader.GetChar(5);
-                            model.BasicPay = reader.GetFloat(6);
-                            model.Deductions = reader.GetFloat(7);
-                            model.TaxablePay = reader.GetFloat(8);
-                            model.IncomeTax = reader.GetFloat(9);
-                            model.NetPay = reader.GetFloat(10);
-                            model.StartDate = reader.GetDateTime(11);
+                            model.BasicPay = reader.GetDouble(2);
+                            model.StartDate = reader.GetDateTime(3);
+                            model.Gender = reader.GetString(4);
+                            model.PhnNo = reader.GetString(5);
+                            model.Department = reader.GetString(6);
+                            model.Address = reader.GetString(7);
+                            model.Deductions = reader.GetDecimal(8);
+                            model.TaxablePay = reader.GetDecimal(9);
+                            model.IncomeTax = reader.GetDecimal(10);
+                            model.NetPay = reader.GetDecimal(11);
                             Console.WriteLine("{0},{1}", model.EmpID,model.EmpName);
                         }
                     }
@@ -50,6 +50,45 @@ namespace ADO.net
                 }
             }
             catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        public bool AddEmployee(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("dbo.SpAddEmployeeDetails", this.connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EmpName", model.EmpName);
+                    command.Parameters.AddWithValue("@BasicPay", model.BasicPay);
+                    command.Parameters.AddWithValue("@StartDate", model.StartDate);
+                    command.Parameters.AddWithValue("@Gender", model.Gender);
+                    command.Parameters.AddWithValue("@PhoneNo", model.PhnNo);
+                    command.Parameters.AddWithValue("@Department", model.Department);
+                    command.Parameters.AddWithValue("@Address", model.Address);
+                    command.Parameters.AddWithValue("@Deductions", model.Deductions);
+                    command.Parameters.AddWithValue("@TaxablePay", model.TaxablePay);
+                    command.Parameters.AddWithValue("@IncomeTax", model.IncomeTax);
+                    command.Parameters.AddWithValue("@NetPay", model.NetPay);
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    connection.Close();
+
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
