@@ -24,15 +24,15 @@ namespace ADO.net
         /// Gets all the employees from the database.
         /// </summary>
         /// <exception cref="Exception"></exception>
-        public void GetAllEmployees()
+        public double GetAllEmployees()
         {
             EmployeeModel model = new EmployeeModel();
             try
             {
-                using(connection)
+                using(this.connection)
                 {
                     string query = @"select * from dbo.employee_payroll";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SqlCommand command = new SqlCommand(query, this.connection);
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
@@ -52,10 +52,12 @@ namespace ADO.net
                             model.IncomeTax = reader.GetDecimal(10);
                             model.NetPay = reader.GetDecimal(11);
                             Console.WriteLine("{0},{1}", model.EmpID,model.EmpName);
+                            return model.BasicPay;
                         }
                     }
                     else
                         Console.WriteLine("No data found");
+                    return 0;
                 }
             }
             catch(Exception ex)
@@ -143,6 +145,122 @@ namespace ADO.net
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Reads the updated salary.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.Exception">no data found</exception>
+        public double ReadSalary()
+        {
+            string connectionString1 = @"Data Source=KARTIKEYA;Initial Catalog=employee_payroll;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            SqlConnection connection = new SqlConnection(connectionString1);
+            double salary;
+            EmployeeModel model = new EmployeeModel();
+            SqlCommand command = new SqlCommand("Select * from employee_payroll", connection);
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                salary = model.BasicPay;
+            }
+            else
+            {
+                throw new Exception("no data found");
+            }
+            reader.Close();
+            connection.Close();
+            return salary;
+        }
+        /// <summary>
+        /// UC 5:
+        /// Gets all employees from database with given date range.
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public void GetAllEmployeesFromDate()
+        {
+            EmployeeModel model = new EmployeeModel();
+            try
+            {
+                using (this.connection)
+                {
+                    string query = @"select * from employee_payroll where StartDate between cast('2020-01-01' as date) and cast(getdate() as date)";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            model.EmpID = reader.GetInt32(0);
+                            model.EmpName = reader.GetString(1);
+                            model.BasicPay = reader.GetDouble(2);
+                            model.StartDate = reader.GetDateTime(3);
+                            model.Gender = reader.GetString(4);
+                            model.PhnNo = reader.GetString(5);
+                            model.Department = reader.GetString(6);
+                            model.Address = reader.GetString(7);
+                            model.Deductions = reader.GetDecimal(8);
+                            model.TaxablePay = reader.GetDecimal(9);
+                            model.IncomeTax = reader.GetDecimal(10);
+                            model.NetPay = reader.GetDecimal(11);
+                            Console.WriteLine("{0},{1}", model.EmpID, model.EmpName);
+                        }
+                    }
+                    else
+                        Console.WriteLine("No data found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        /// <summary>
+        /// UC 6: 
+        /// Implements the database functions like count, min, max, avg, and sum.
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public void ImplementDatabaseFunctions()
+        {
+            EmployeeModel model = new EmployeeModel();
+            try
+            {
+                using (this.connection)
+                {
+                    string query = @"select Gender, SUM(BasicPay) as SumOfSalary, MAX(basicPay) as MaxSalary, MIN(BasicPay) as MinSalary, AVG(BasicPay) as AvgSalary, COUNT(BasicPay) as Count from dbo.employee_payroll where Gender='M' or Gender='F' group by Gender";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string Gender = reader[0].ToString();
+                            double SumOfSalary = reader.GetDouble(1);
+                            double MaxSalary = reader.GetDouble(2);
+                            double MinSalary = reader.GetDouble(3);
+                            double AvgSalary = reader.GetDouble(4);
+                            int Count = reader.GetInt32(5);
+                            Console.WriteLine("Gender:{0}\tCount:{1}\tMinSalary:{2}\tMaxSalary:{3}\tSumOfSalary:{4}\tAvgSalary:{5}\n",Gender,Count,MinSalary,MaxSalary,SumOfSalary,AvgSalary);
+                        }
+                    }
+                    else
+                        Console.WriteLine("No data found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
             }
         }
     }
