@@ -13,8 +13,17 @@ namespace ADO.net
 {
     public class EmployeeRepository
     {
+        /// <summary>
+        /// UC 1:
+        /// The connection string which creates the connection between our code and the databse
+        /// </summary>
         public static string connectionString = "Data Source=KARTIKEYA;Initial Catalog=payroll_service;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         SqlConnection connection = new SqlConnection(connectionString);
+        /// <summary>
+        /// UC 2:
+        /// Gets all the employees from the database.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public void GetAllEmployees()
         {
             EmployeeModel model = new EmployeeModel();
@@ -58,6 +67,13 @@ namespace ADO.net
                 connection.Close();
             }
         }
+        /// <summary>
+        /// UC 2:
+        /// Adds the employee.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public bool AddEmployee(EmployeeModel model)
         {
             try
@@ -80,7 +96,6 @@ namespace ADO.net
                     connection.Open();
                     var result = command.ExecuteNonQuery();
                     connection.Close();
-
                     if (result != 0)
                     {
                         return true;
@@ -95,6 +110,39 @@ namespace ADO.net
             finally
             {
                 connection.Close();
+            }
+        }
+        /// <summary>
+        /// UC 3:
+        /// Updates the salary in data base.
+        /// </summary>
+        /// <param name="model">The employee model.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public bool UpdateSalary(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand sqlCommand = new SqlCommand("spUpdateSalary", this.connection);
+                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@id", model.EmpID);
+                    sqlCommand.Parameters.AddWithValue("@salary", model.BasicPay);
+                    sqlCommand.Parameters.AddWithValue("@name", model.EmpName);
+                    connection.Open();
+                    int result = sqlCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }
