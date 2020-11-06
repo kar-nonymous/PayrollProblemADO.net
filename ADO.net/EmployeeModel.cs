@@ -22,7 +22,7 @@ namespace ADO.net
         public string PhnNo { get; set; }
         public string Address { get; set; }
         public DateTime StartDate { get; set; }
-        public double BasicPay { get; set; }
+        public decimal BasicPay { get; set; }
         public decimal Deductions { get; set; }
         public decimal TaxablePay { get; set; }
         public decimal IncomeTax { get; set; }

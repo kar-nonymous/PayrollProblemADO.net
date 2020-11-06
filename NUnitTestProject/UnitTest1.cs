@@ -13,9 +13,9 @@ namespace NUnitTestProject
             model.EmpID = 3;
             model.EmpName = "Megan";
             model.BasicPay = 3000000;
-            //employeeRepository.UpdateSalary(model);
-            //double actual = employeeRepository.ReadSalary();
-           // Assert.AreEqual(model.BasicPay, actual);
+            employeeRepository.UpdateSalary(model);
+            double actual = employeeRepository.ReadSalary();
+            Assert.AreEqual(model.BasicPay, actual);
         }
     }
 }

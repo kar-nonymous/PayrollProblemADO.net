@@ -312,5 +312,47 @@ namespace ADO.net
                 connection.Close();
             }
         }
+        /// <summary>
+        /// UC 8:
+        /// Gets the salary details from multiple tables.
+        /// </summary>
+        /// <exception cref="System.Exception"></exception>
+        public void GetSalaryDetailsFromMultipleTables()
+        {
+            EmployeeModel model = new EmployeeModel();
+            try
+            {
+                using (this.connection)
+                {
+                    string query = @"select e.EmpName ,p.BasicPay,p.Deductions,p.TaxablePay,p.IncomeTax,NetPay from employee e inner join payroll p on e.EmpId=p.EmpId";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            model.EmpName = reader.GetString(0);
+                            model.BasicPay = reader.GetDecimal(1);
+                            model.Deductions = reader.GetDecimal(2);
+                            model.TaxablePay = reader.GetDecimal(3);
+                            model.IncomeTax = reader.GetDecimal(4);
+                            model.NetPay = reader.GetDecimal(5);
+                            Console.WriteLine("{0},{1},{2},{3},{4},{5}", model.EmpName, model.BasicPay, model.Deductions, model.TaxablePay, model.IncomeTax, model.NetPay);
+                        }
+                    }
+                    else
+                        Console.WriteLine("No data found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }
