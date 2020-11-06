@@ -24,7 +24,7 @@ namespace ADO.net
         /// Gets all the employees from the database.
         /// </summary>
         /// <exception cref="Exception"></exception>
-        public double GetAllEmployees()
+        public void GetAllEmployees()
         {
             EmployeeModel model = new EmployeeModel();
             try
@@ -41,7 +41,7 @@ namespace ADO.net
                         {
                             model.EmpID = reader.GetInt32(0);
                             model.EmpName = reader.GetString(1);
-                            model.BasicPay = reader.GetDouble(2);
+                            model.BasicPay = reader.GetDecimal(2);
                             model.StartDate = reader.GetDateTime(3);
                             model.Gender = reader.GetString(4);
                             model.PhnNo = reader.GetString(5);
@@ -52,12 +52,10 @@ namespace ADO.net
                             model.IncomeTax = reader.GetDecimal(10);
                             model.NetPay = reader.GetDecimal(11);
                             Console.WriteLine("{0},{1}", model.EmpID, model.EmpName);
-                            return model.BasicPay;
                         }
                     }
                     else
                         Console.WriteLine("No data found");
-                    return 0;
                 }
             }
             catch (Exception ex)
@@ -152,11 +150,11 @@ namespace ADO.net
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">no data found</exception>
-        public double ReadSalary()
+        public decimal ReadSalary()
         {
             string connectionString1 = @"Data Source=KARTIKEYA;Initial Catalog=employee_payroll;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection connection = new SqlConnection(connectionString1);
-            double salary;
+            decimal salary;
             EmployeeModel model = new EmployeeModel();
             SqlCommand command = new SqlCommand("Select * from employee_payroll", connection);
             connection.Open();
@@ -195,7 +193,7 @@ namespace ADO.net
                         {
                             model.EmpID = reader.GetInt32(0);
                             model.EmpName = reader.GetString(1);
-                            model.BasicPay = reader.GetDouble(2);
+                            model.BasicPay = reader.GetDecimal(2);
                             model.StartDate = reader.GetDateTime(3);
                             model.Gender = reader.GetString(4);
                             model.PhnNo = reader.GetString(5);

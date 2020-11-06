@@ -27,5 +27,6 @@ namespace ADO.net
         public decimal TaxablePay { get; set; }
         public decimal IncomeTax { get; set; }
         public decimal NetPay { get; set; }
+        public string Department { get; set; }
     }
 }
